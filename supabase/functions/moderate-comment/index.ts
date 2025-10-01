@@ -116,10 +116,17 @@ Be precise and avoid false positives on legitimate criticism or opinions.`
       throw new Error('Invalid AI response format');
     }
 
-    // Parse the AI response
+    // Parse the AI response - handle markdown code blocks
     let moderationResult;
     try {
-      moderationResult = JSON.parse(aiResponse);
+      let jsonText = aiResponse.trim();
+      // Remove markdown code block syntax if present
+      if (jsonText.startsWith('```json')) {
+        jsonText = jsonText.replace(/^```json\s*/i, '').replace(/\s*```$/, '');
+      } else if (jsonText.startsWith('```')) {
+        jsonText = jsonText.replace(/^```\s*/i, '').replace(/\s*```$/, '');
+      }
+      moderationResult = JSON.parse(jsonText);
     } catch (parseError) {
       console.error('Failed to parse AI response:', aiResponse);
       // Default to safe if parsing fails

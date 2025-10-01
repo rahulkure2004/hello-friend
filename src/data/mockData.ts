@@ -39,7 +39,7 @@ export const mockUsers = [
 
 export const mockPosts = [
   {
-    id: '1',
+    id: '550e8400-e29b-41d4-a716-446655440001',
     user_id: '1',
     image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
     caption: 'Beautiful sunset at the beach 🌅 Perfect end to a wonderful day!',
@@ -48,8 +48,8 @@ export const mockPosts = [
     profiles: mockUsers[0]
   },
   {
-    id: '2',
-    user_id: '2', 
+    id: '550e8400-e29b-41d4-a716-446655440002',
+    user_id: '2',
     image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=600&fit=crop',
     caption: 'Homemade pizza night! 🍕 Nothing beats fresh ingredients and good company.',
     likes_count: 89,
@@ -57,7 +57,7 @@ export const mockPosts = [
     profiles: mockUsers[1]
   },
   {
-    id: '3',
+    id: '550e8400-e29b-41d4-a716-446655440003',
     user_id: '3',
     image_url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=600&fit=crop',
     caption: 'Working on some exciting new designs ✨ Can\'t wait to share the final results!',
@@ -66,7 +66,7 @@ export const mockPosts = [
     profiles: mockUsers[2]
   },
   {
-    id: '4',
+    id: '550e8400-e29b-41d4-a716-446655440004',
     user_id: '4',
     image_url: 'https://images.unsplash.com/photo-1464822759844-d150ad6d1dff?w=600&h=600&fit=crop',
     caption: 'Reached the summit today! 🏔️ The view was absolutely incredible. Worth every step.',
@@ -75,7 +75,7 @@ export const mockPosts = [
     profiles: mockUsers[3]
   },
   {
-    id: '5',
+    id: '550e8400-e29b-41d4-a716-446655440005',
     user_id: '5',
     image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=600&fit=crop',
     caption: 'Morning workout complete! 💪 Remember, consistency is key to reaching your goals.',
@@ -84,7 +84,7 @@ export const mockPosts = [
     profiles: mockUsers[4]
   },
   {
-    id: '6',
+    id: '550e8400-e29b-41d4-a716-446655440006',
     user_id: '1',
     image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
     caption: 'Coffee and cameras ☕📷 My favorite combination for a productive morning.',
