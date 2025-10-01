@@ -6,6 +6,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple bad-words dataset loader (loaded once per instance)
+let badWordsCache: Set<string> | null = null;
+async function getBadWordsSet() {
+  if (badWordsCache) return badWordsCache;
+  try {
+    const csv = await Deno.readTextFile(new URL('./badwords.csv', import.meta.url));
+    const lines = csv.split('\n').slice(1); // skip header
+    const set = new Set<string>();
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const comma = line.lastIndexOf(',');
+      const text = comma >= 0 ? line.slice(0, comma) : line;
+      const label = comma >= 0 ? line.slice(comma + 1).trim() : '1.0';
+      if (label === '1.0') set.add(text.toLowerCase());
+    }
+    badWordsCache = set;
+  } catch (e) {
+    console.warn('badwords.csv not found or failed to read:', e);
+    badWordsCache = new Set();
+  }
+  return badWordsCache;
+}
+
+function containsBadWord(text: string, set: Set<string>): { matched: string | null } {
+  const t = text.toLowerCase();
+  for (const phrase of set) {
+    if (!phrase) continue;
+    if (t.includes(phrase)) return { matched: phrase };
+  }
+  return { matched: null };
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -25,6 +58,17 @@ serve(async (req) => {
         isHarmful: false, 
         reason: 'Empty comment' 
       }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Dataset-based quick filter
+    const badSet = await getBadWordsSet();
+    const { matched } = containsBadWord(comment, badSet);
+    if (matched) {
+      const moderationResult = { isHarmful: true, reason: `Dataset match: ${matched}` };
+      console.log('Moderation by dataset:', moderationResult);
+      return new Response(JSON.stringify(moderationResult), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

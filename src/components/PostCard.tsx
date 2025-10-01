@@ -176,6 +176,23 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
     setIsLoading(true);
     
     try {
+      // Ensure a corresponding post exists in the database to satisfy FK constraints
+      const { error: upsertError } = await supabase
+        .from('posts')
+        .upsert(
+          {
+            id: post.id,
+            image_url: post.image_url,
+            caption: post.caption ?? null,
+            user_id: currentUserId,
+          },
+          { onConflict: 'id', ignoreDuplicates: true }
+        );
+
+      if (upsertError) {
+        console.warn('Post upsert skipped/failed (will attempt comment anyway):', upsertError);
+      }
+
       // First, moderate the comment using our AI service
       const moderationResponse = await supabase.functions.invoke('moderate-comment', {
         body: { comment: newComment.trim() }
