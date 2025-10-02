@@ -91,6 +91,87 @@ export const mockPosts = [
     likes_count: 92,
     created_at: '2024-01-15T09:00:00Z',
     profiles: mockUsers[0]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440007',
+    user_id: '2',
+    image_url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=600&fit=crop',
+    caption: 'Fresh pasta made from scratch! 🍝 There\'s nothing quite like homemade Italian cuisine.',
+    likes_count: 167,
+    created_at: '2024-01-14T18:20:00Z',
+    profiles: mockUsers[1]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440008',
+    user_id: '3',
+    image_url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=600&fit=crop',
+    caption: 'New UI design system coming together 🎨 Loving these color combinations!',
+    likes_count: 234,
+    created_at: '2024-01-14T15:30:00Z',
+    profiles: mockUsers[2]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440009',
+    user_id: '4',
+    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
+    caption: 'Early morning hike rewards 🌄 The world looks different from up here.',
+    likes_count: 189,
+    created_at: '2024-01-14T06:15:00Z',
+    profiles: mockUsers[3]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440010',
+    user_id: '5',
+    image_url: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=600&fit=crop',
+    caption: 'Leg day conquered! 🦵 Push yourself because no one else is going to do it for you.',
+    likes_count: 142,
+    created_at: '2024-01-14T10:45:00Z',
+    profiles: mockUsers[4]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440011',
+    user_id: '1',
+    image_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=600&fit=crop',
+    caption: 'Golden hour photography at its finest ✨ Nature is the best artist.',
+    likes_count: 298,
+    created_at: '2024-01-13T17:30:00Z',
+    profiles: mockUsers[0]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440012',
+    user_id: '2',
+    image_url: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=600&fit=crop',
+    caption: 'Pancake Sunday! 🥞 The perfect way to start a lazy weekend morning.',
+    likes_count: 176,
+    created_at: '2024-01-13T09:00:00Z',
+    profiles: mockUsers[1]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440013',
+    user_id: '3',
+    image_url: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=600&h=600&fit=crop',
+    caption: 'Workspace setup complete! 💻 Ready to create some amazing designs today.',
+    likes_count: 211,
+    created_at: '2024-01-13T08:30:00Z',
+    profiles: mockUsers[2]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440014',
+    user_id: '4',
+    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
+    caption: 'Camping under the stars 🏕️⭐ Sometimes you need to disconnect to reconnect.',
+    likes_count: 256,
+    created_at: '2024-01-12T21:00:00Z',
+    profiles: mockUsers[3]
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440015',
+    user_id: '5',
+    image_url: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=600&fit=crop',
+    caption: 'Post-workout smoothie bowl 🥤 Fuel your body with the good stuff!',
+    likes_count: 134,
+    created_at: '2024-01-12T11:30:00Z',
+    profiles: mockUsers[4]
   }
 ];
 
