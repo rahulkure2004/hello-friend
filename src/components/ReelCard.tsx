@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { ReelDialog } from "./ReelDialog";
 
 interface Profile {
   username: string;
@@ -30,6 +31,7 @@ interface ReelCardProps {
 export function ReelCard({ reel, currentUserId }: ReelCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(reel.likes_count);
+  const [showDialog, setShowDialog] = useState(false);
   const { toast } = useToast();
 
   const handleLike = () => {
@@ -69,36 +71,40 @@ export function ReelCard({ reel, currentUserId }: ReelCardProps) {
   };
 
   return (
-    <Card className="relative overflow-hidden rounded-2xl border-0 bg-card shadow-lg hover:shadow-xl transition-shadow">
-      <div className="relative aspect-[9/16] bg-muted">
-        <img
-          src={reel.thumbnail_url}
-          alt={reel.caption || "Reel"}
-          className="w-full h-full object-cover"
-        />
-        
-        {/* Play overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center backdrop-blur-sm">
-            <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
+    <>
+      <Card 
+        className="relative overflow-hidden rounded-2xl border-0 bg-card shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+        onClick={() => setShowDialog(true)}
+      >
+        <div className="relative aspect-[9/16] bg-muted">
+          <img
+            src={reel.thumbnail_url}
+            alt={reel.caption || "Reel"}
+            className="w-full h-full object-cover"
+          />
+          
+          {/* Play overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center backdrop-blur-sm">
+              <Play className="w-8 h-8 text-foreground ml-1" fill="currentColor" />
+            </div>
           </div>
-        </div>
 
-        {/* Views count */}
-        <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+          {/* Views count */}
+          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
           <Eye className="w-4 h-4 text-white" />
           <span className="text-white text-sm font-medium">
             {reel.views_count >= 1000 
               ? `${(reel.views_count / 1000).toFixed(1)}K` 
               : reel.views_count}
           </span>
-        </div>
+          </div>
 
-        {/* Bottom gradient overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
-        
-        {/* User info and actions */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
+          {/* Bottom gradient overlay */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
+          
+          {/* User info and actions */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
@@ -161,7 +167,15 @@ export function ReelCard({ reel, currentUserId }: ReelCardProps) {
             </div>
           </div>
         </div>
-      </div>
-    </Card>
+        </div>
+      </Card>
+
+      <ReelDialog
+        reel={reel}
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        currentUserId={currentUserId}
+      />
+    </>
   );
 }

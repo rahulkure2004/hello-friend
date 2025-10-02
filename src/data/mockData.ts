@@ -41,8 +41,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440001',
     user_id: '1',
-    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
-    caption: 'Beautiful sunset at the beach 🌅 Perfect end to a wonderful day!',
+    image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=600&fit=crop',
+    caption: 'Portrait mode hits different 📸✨ Loving the golden hour vibes!',
     likes_count: 124,
     created_at: '2024-01-15T18:30:00Z',
     profiles: mockUsers[0]
@@ -68,8 +68,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440004',
     user_id: '4',
-    image_url: 'https://images.unsplash.com/photo-1464822759844-d150ad6d1dff?w=600&h=600&fit=crop',
-    caption: 'Reached the summit today! 🏔️ The view was absolutely incredible. Worth every step.',
+    image_url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&h=600&fit=crop',
+    caption: 'Weekend vibes with the squad! 🏔️ Adventure buddies for life.',
     likes_count: 203,
     created_at: '2024-01-15T16:45:00Z',
     profiles: mockUsers[3]
@@ -86,8 +86,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440006',
     user_id: '1',
-    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
-    caption: 'Coffee and cameras ☕📷 My favorite combination for a productive morning.',
+    image_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=600&h=600&fit=crop',
+    caption: 'Coffee date with my favorite person ☕❤️ Perfect morning!',
     likes_count: 92,
     created_at: '2024-01-15T09:00:00Z',
     profiles: mockUsers[0]
@@ -113,8 +113,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440009',
     user_id: '4',
-    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
-    caption: 'Early morning hike rewards 🌄 The world looks different from up here.',
+    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&h=600&fit=crop',
+    caption: 'Exploring new places with good company 🌄 Adventure mode: ON!',
     likes_count: 189,
     created_at: '2024-01-14T06:15:00Z',
     profiles: mockUsers[3]
@@ -131,8 +131,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440011',
     user_id: '1',
-    image_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=600&fit=crop',
-    caption: 'Golden hour photography at its finest ✨ Nature is the best artist.',
+    image_url: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=600&h=600&fit=crop',
+    caption: 'Golden hour portraits with my bestie ✨ She makes every photo better!',
     likes_count: 298,
     created_at: '2024-01-13T17:30:00Z',
     profiles: mockUsers[0]
@@ -158,8 +158,8 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440014',
     user_id: '4',
-    image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
-    caption: 'Camping under the stars 🏕️⭐ Sometimes you need to disconnect to reconnect.',
+    image_url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=600&fit=crop',
+    caption: 'Weekend getaway with the crew 🏕️⭐ Making memories!',
     likes_count: 256,
     created_at: '2024-01-12T21:00:00Z',
     profiles: mockUsers[3]
@@ -212,9 +212,9 @@ export const mockReels = [
   {
     id: '660e8400-e29b-41d4-a716-446655440004',
     user_id: '4',
-    video_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=700&fit=crop',
-    thumbnail_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=700&fit=crop',
-    caption: 'Mountain vibes 🏔️',
+    video_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=700&fit=crop',
+    caption: 'Adventure crew 🏔️',
     likes_count: 1243,
     views_count: 18765,
     created_at: '2024-01-14T16:45:00Z',
@@ -234,9 +234,9 @@ export const mockReels = [
   {
     id: '660e8400-e29b-41d4-a716-446655440006',
     user_id: '1',
-    video_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=700&fit=crop',
-    thumbnail_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=700&fit=crop',
-    caption: 'Golden hour magic ✨',
+    video_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=700&fit=crop',
+    caption: 'Portrait session ✨',
     likes_count: 987,
     views_count: 15432,
     created_at: '2024-01-13T18:00:00Z',

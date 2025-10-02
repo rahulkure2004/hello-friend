@@ -310,9 +310,10 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
 
         {/* Caption */}
         {post.caption && (
-          <p className="text-sm mb-3">
-            <span className="font-semibold">{post.profiles.username}</span> {post.caption}
-          </p>
+          <div className="text-sm mb-3">
+            <span className="font-semibold">{post.profiles.username}</span>{" "}
+            <span className="break-words">{post.caption}</span>
+          </div>
         )}
 
         {/* Comments */}
