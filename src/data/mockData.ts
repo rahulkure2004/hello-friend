@@ -175,6 +175,75 @@ export const mockPosts = [
   }
 ];
 
+export const mockReels = [
+  {
+    id: '660e8400-e29b-41d4-a716-446655440001',
+    user_id: '1',
+    video_url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=700&fit=crop',
+    caption: 'Behind the lens 📸✨',
+    likes_count: 432,
+    views_count: 5234,
+    created_at: '2024-01-15T12:30:00Z',
+    profiles: mockUsers[0]
+  },
+  {
+    id: '660e8400-e29b-41d4-a716-446655440002',
+    user_id: '2',
+    video_url: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=700&fit=crop',
+    caption: 'Quick cooking tip! 🍳',
+    likes_count: 891,
+    views_count: 12453,
+    created_at: '2024-01-15T14:20:00Z',
+    profiles: mockUsers[1]
+  },
+  {
+    id: '660e8400-e29b-41d4-a716-446655440003',
+    user_id: '3',
+    video_url: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=700&fit=crop',
+    caption: 'Design process ✨',
+    likes_count: 623,
+    views_count: 8932,
+    created_at: '2024-01-15T10:15:00Z',
+    profiles: mockUsers[2]
+  },
+  {
+    id: '660e8400-e29b-41d4-a716-446655440004',
+    user_id: '4',
+    video_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=700&fit=crop',
+    caption: 'Mountain vibes 🏔️',
+    likes_count: 1243,
+    views_count: 18765,
+    created_at: '2024-01-14T16:45:00Z',
+    profiles: mockUsers[3]
+  },
+  {
+    id: '660e8400-e29b-41d4-a716-446655440005',
+    user_id: '5',
+    video_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=700&fit=crop',
+    caption: 'Fitness motivation 💪',
+    likes_count: 756,
+    views_count: 11234,
+    created_at: '2024-01-14T08:30:00Z',
+    profiles: mockUsers[4]
+  },
+  {
+    id: '660e8400-e29b-41d4-a716-446655440006',
+    user_id: '1',
+    video_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=700&fit=crop',
+    thumbnail_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=700&fit=crop',
+    caption: 'Golden hour magic ✨',
+    likes_count: 987,
+    views_count: 15432,
+    created_at: '2024-01-13T18:00:00Z',
+    profiles: mockUsers[0]
+  }
+];
+
 export const mockComments = [
   {
     id: '1',
