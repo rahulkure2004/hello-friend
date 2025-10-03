@@ -8,10 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AuthDialogProps {
-  onAuthSuccess: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function AuthDialog({ onAuthSuccess }: AuthDialogProps) {
+export function AuthDialog({ open, onOpenChange, onSuccess }: AuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,7 +79,7 @@ export function AuthDialog({ onAuthSuccess }: AuthDialogProps) {
           title: "Account created!",
           description: "Welcome to SocialSafe! You can now start exploring.",
         });
-        onAuthSuccess();
+        onSuccess();
       }
     } catch (error) {
       console.error('Sign up error:', error);
@@ -111,7 +113,7 @@ export function AuthDialog({ onAuthSuccess }: AuthDialogProps) {
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
-        onAuthSuccess();
+        onSuccess();
       }
     } catch (error) {
       console.error('Sign in error:', error);
@@ -125,9 +127,11 @@ export function AuthDialog({ onAuthSuccess }: AuthDialogProps) {
     }
   };
 
+  if (!open) return null;
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-md">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => onOpenChange(false)}>
+      <Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
             Welcome to SocialSafe

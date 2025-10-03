@@ -132,9 +132,11 @@ const Index = () => {
         </Tabs>
       </main>
 
-      {showAuth && (
-        <AuthDialog onAuthSuccess={handleAuthSuccess} />
-      )}
+      <AuthDialog 
+        open={showAuth} 
+        onOpenChange={setShowAuth}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };
