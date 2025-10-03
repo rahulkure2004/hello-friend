@@ -6,6 +6,90 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Heuristic moderation helpers for robustness and stricter emoji handling
+const BAD_EMOJIS = new Set(['💩','🖕','🤮','🤡','🔪','💀','☠️','🔫']);
+const MOCKING_EMOJIS = new Set(['😂','🤣']);
+const THREAT_EMOJIS = new Set(['🔪','💀','☠️','🔫']);
+let cachedBadWords: string[] | null = null;
+
+async function loadBadWords(): Promise<string[]> {
+  if (cachedBadWords) return cachedBadWords;
+  try {
+    const csv = await Deno.readTextFile(new URL('./badwords.csv', import.meta.url));
+    cachedBadWords = csv
+      .split(/\r?\n/)
+      .map((l) => l.trim().toLowerCase())
+      .filter((l) => l && !l.startsWith('#'));
+  } catch (e) {
+    console.warn('Failed to load badwords.csv, falling back to minimal list:', e);
+    cachedBadWords = ['chutiya','bc','mc','kutte','kamina','bewakoof','asshole','shit','idiot'];
+  }
+  return cachedBadWords!;
+}
+
+function containsAny(text: string, list: Iterable<string>): boolean {
+  for (const item of list) {
+    if (text.includes(item)) return true;
+  }
+  return false;
+}
+
+function countMatches(text: string, chars: Set<string>): number {
+  let c = 0;
+  for (const ch of text) if (chars.has(ch)) c++;
+  return c;
+}
+
+function secondPersonDirected(text: string): boolean {
+  // Include English + common Hindi/Urdu second-person markers
+  const patterns = [
+    /\b(you|ur|u|you're|youre|your|yours)\b/i,
+    /\b(tu|tum|tera|teri|tere|teray|aap|tm)\b/i,
+    /\b(hai|ka|ke|ki)\b/i,
+  ];
+  return patterns.some((r) => r.test(text));
+}
+
+async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; reason: string }>{
+  const text = raw.trim();
+  const lower = text.toLowerCase();
+  const badwords = await loadBadWords();
+
+  const hasBadWord = badwords.some((w) => lower.includes(w));
+  const badEmojiCount = countMatches(text, BAD_EMOJIS);
+  const mockingEmojiCount = countMatches(text, MOCKING_EMOJIS);
+  const threatEmojiPresent = containsAny(text, THREAT_EMOJIS);
+  const isSecondPerson = secondPersonDirected(text);
+
+  // Heuristic rules (strict but fair):
+  // 1) Explicit insults or slurs
+  if (hasBadWord && isSecondPerson) {
+    return { isHarmful: true, reason: 'Direct insult detected via keyword list addressed at a person.' };
+  }
+
+  // 2) Mocking emojis combined with second-person or sarcastic praise -> harmful
+  if ((mockingEmojiCount >= 1 && badEmojiCount >= 1 && isSecondPerson) || mockingEmojiCount >= 2) {
+    return { isHarmful: true, reason: 'Combination of mocking and demeaning emojis directed at a person.' };
+  }
+
+  // 3) High-risk emojis alone aimed at a person
+  if (badEmojiCount >= 2 && isSecondPerson) {
+    return { isHarmful: true, reason: 'Multiple demeaning emojis targeted at a person.' };
+  }
+
+  // 4) Threatening emojis or language
+  if (threatEmojiPresent && isSecondPerson) {
+    return { isHarmful: true, reason: 'Threatening emojis suggest intimidation or harm.' };
+  }
+
+  // 5) Fallback: single demeaning emoji with explicit negative phrasing
+  if (badEmojiCount >= 1 && /\b(bad|terrible|disgusting|ugly|loser|cringe)\b/i.test(lower)) {
+    return { isHarmful: true, reason: 'Demeaning emoji used with negative descriptors.' };
+  }
+
+  return { isHarmful: false, reason: 'Clean content' };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -24,14 +108,14 @@ serve(async (req) => {
       );
     }
 
+    // Run strict heuristic upfront so we can fall back or override AI when needed
+    const heuristic = await heuristicModerate(comment);
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       console.error('LOVABLE_API_KEY is not configured');
       return new Response(
-        JSON.stringify({ 
-          isHarmful: false, 
-          reason: 'AI service not configured - content allowed by default' 
-        }),
+        JSON.stringify(heuristic),
         { 
           status: 200, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -80,33 +164,11 @@ Be strict but fair. Flag genuine cyberbullying, harassment, and hate speech. All
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ 
-          isHarmful: false,
-          reason: "Rate limit exceeded - content allowed by default"
-        }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ 
-          isHarmful: false,
-          reason: "AI service unavailable - content allowed by default"
-        }), {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      const errorText = await response.text();
-      console.error("AI Gateway error:", response.status, errorText);
-      
-      return new Response(JSON.stringify({ 
-        isHarmful: false, 
-        reason: 'AI service error - content allowed by default' 
-      }), {
+      let reason = 'AI service error - using heuristic fallback';
+      if (response.status === 429) reason = 'AI rate limit exceeded - using heuristic fallback';
+      if (response.status === 402) reason = 'AI service unavailable - using heuristic fallback';
+      const result = { ...heuristic, reason: heuristic.isHarmful ? `${reason}; ${heuristic.reason}` : reason };
+      return new Response(JSON.stringify(result), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -116,16 +178,13 @@ Be strict but fair. Flag genuine cyberbullying, harassment, and hate speech. All
     const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      return new Response(JSON.stringify({ 
-        isHarmful: false, 
-        reason: 'Invalid AI response - content allowed by default' 
-      }), {
+      return new Response(JSON.stringify(heuristic), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    let moderationResult;
+    let moderationResult: { isHarmful: boolean; reason?: string };
     try {
       let jsonText = aiResponse.trim();
       if (jsonText.startsWith('```json')) {
@@ -136,15 +195,21 @@ Be strict but fair. Flag genuine cyberbullying, harassment, and hate speech. All
       moderationResult = JSON.parse(jsonText);
     } catch (parseError) {
       console.error('Failed to parse AI response:', aiResponse);
-      moderationResult = { isHarmful: false, reason: 'Parse error - content allowed by default' };
+      moderationResult = heuristic;
     }
 
     if (typeof moderationResult.isHarmful !== 'boolean') {
-      moderationResult.isHarmful = false;
+      moderationResult.isHarmful = heuristic.isHarmful;
     }
     
     if (!moderationResult.reason) {
       moderationResult.reason = moderationResult.isHarmful ? 'Content flagged as potentially harmful' : 'Clean content';
+    }
+
+    // Combine AI with heuristic: conservative decision
+    if (heuristic.isHarmful && !moderationResult.isHarmful) {
+      moderationResult.isHarmful = true;
+      moderationResult.reason = `Heuristic flagged harassment; AI said: ${moderationResult.reason}`;
     }
 
     console.log('Moderation result:', moderationResult);
