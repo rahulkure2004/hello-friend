@@ -103,13 +103,16 @@ function analyzeEmojiSentiment(text: string): {
 }
 
 function secondPersonDirected(text: string): boolean {
-  // Include English + common Hindi/Urdu second-person markers
-  const patterns = [
-    /\b(you|ur|u|you're|youre|your|yours)\b/i,
-    /\b(tu|tum|tera|teri|tere|teray|aap|tm)\b/i,
-    /\b(hai|ka|ke|ki)\b/i,
-  ];
-  return patterns.some((r) => r.test(text));
+  // Normalize by replacing non-letter/number characters (including emojis) with spaces
+  const lower = text.toLowerCase();
+  const normalized = lower.replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const tokens = new Set(normalized.split(/\s+/));
+  const markers = ['you','ur','u','you\'re','youre','your','yours','tu','tum','tera','teri','tere','teray','aap','tm'];
+  const hasMarker = markers.some(m => tokens.has(m));
+  if (hasMarker) return true;
+  // Fallback regex for languages without spaces or edge cases
+  const fallback = /(you|ur|youre|you're|your|yours|tu|tum|tera|teri|tere|teray|aap|tm)/i;
+  return fallback.test(lower);
 }
 
 async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; reason: string }>{
