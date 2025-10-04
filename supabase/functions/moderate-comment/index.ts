@@ -125,7 +125,9 @@ async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; rea
   const hasBadWord = badwords.some((w) => lower.includes(w));
   const isSecondPerson = secondPersonDirected(text);
 
-  console.log('Emoji sentiment analysis:', emojiAnalysis);
+  console.log('Emoji sentiment analysis:', JSON.stringify(emojiAnalysis));
+  console.log('Is second person directed:', isSecondPerson);
+  console.log('Comment text:', text);
 
   // Enhanced heuristic rules using emoji2vec sentiment mapping:
   
@@ -160,13 +162,22 @@ async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; rea
     return { isHarmful: true, reason: `Highly negative emoji sentiment (score: ${emojiAnalysis.sentimentScore.toFixed(2)}) directed at a person.` };
   }
 
-  // 7) Fallback: single offensive/mocking emoji with explicit negative phrasing
+  // 7) Multiple negative/sarcastic emojis even without clear second-person
+  // This catches cases like "Wah kya style hai tera😂🫠💩" where tera might be missed
+  if ((emojiAnalysis.offensiveCount >= 1 || emojiAnalysis.mockingCount >= 1 || emojiAnalysis.sarcasticCount >= 1) && 
+      emojiAnalysis.totalEmojis >= 2 && 
+      emojiAnalysis.sentimentScore < 0 &&
+      /\b(kya|hai|tera|tum|tu|you|your|ur)\b/i.test(lower)) {
+    return { isHarmful: true, reason: 'Multiple negative emojis with second-person context suggesting mockery or bullying.' };
+  }
+
+  // 8) Fallback: single offensive/mocking emoji with explicit negative phrasing
   if ((emojiAnalysis.offensiveCount >= 1 || emojiAnalysis.mockingCount >= 1) && 
       /\b(bad|terrible|disgusting|ugly|loser|cringe|pathetic|stupid|dumb)\b/i.test(lower)) {
     return { isHarmful: true, reason: 'Negative emoji used with derogatory descriptors.' };
   }
 
-  // 8) Sarcastic emojis with negative context
+  // 9) Sarcastic emojis with negative context
   if (emojiAnalysis.sarcasticCount >= 2 && isSecondPerson && emojiAnalysis.positiveCount === 0) {
     return { isHarmful: true, reason: 'Multiple sarcastic emojis suggesting mockery.' };
   }
