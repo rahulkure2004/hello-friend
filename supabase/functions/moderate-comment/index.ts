@@ -6,10 +6,25 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Heuristic moderation helpers for robustness and stricter emoji handling
-const BAD_EMOJIS = new Set(['💩','🖕','🤮','🤡','🔪','💀','☠️','🔫']);
-const MOCKING_EMOJIS = new Set(['😂','🤣']);
-const THREAT_EMOJIS = new Set(['🔪','💀','☠️','🔫']);
+// Emoji sentiment mapping based on emoji2vec principles
+// Emojis categorized by their semantic meaning and sentiment
+const EMOJI_SENTIMENT_MAP = {
+  // Highly negative/offensive emojis
+  offensive: new Set(['💩','🖕','🤮','🤡','🍑','🍆']),
+  // Threatening/violent emojis
+  threatening: new Set(['🔪','💀','☠️','🔫','⚰️','🩸','👊','🗡️']),
+  // Mocking/laughing emojis (context-dependent)
+  mocking: new Set(['😂','🤣','😹','🤪','😜','🙃']),
+  // Negative sentiment emojis
+  negative: new Set(['😠','😡','🤬','😤','👎','💔','😒','🙄','😑','🤨']),
+  // Sarcastic/passive-aggressive emojis
+  sarcastic: new Set(['🙂','🫠','😏','🤭']),
+  // Positive sentiment emojis (generally safe)
+  positive: new Set(['😊','😀','😃','❤️','👍','🎉','✨','🌟','💯','🙌']),
+  // Neutral emojis
+  neutral: new Set(['🤔','😐','😶','🫥'])
+};
+
 let cachedBadWords: string[] | null = null;
 
 async function loadBadWords(): Promise<string[]> {
@@ -40,6 +55,53 @@ function countMatches(text: string, chars: Set<string>): number {
   return c;
 }
 
+// Enhanced emoji analysis using sentiment mapping
+function analyzeEmojiSentiment(text: string): {
+  offensiveCount: number;
+  threateningCount: number;
+  mockingCount: number;
+  negativeCount: number;
+  sarcasticCount: number;
+  positiveCount: number;
+  totalEmojis: number;
+  sentimentScore: number; // -1 (very negative) to 1 (very positive)
+} {
+  let offensiveCount = 0;
+  let threateningCount = 0;
+  let mockingCount = 0;
+  let negativeCount = 0;
+  let sarcasticCount = 0;
+  let positiveCount = 0;
+
+  for (const ch of text) {
+    if (EMOJI_SENTIMENT_MAP.offensive.has(ch)) offensiveCount++;
+    if (EMOJI_SENTIMENT_MAP.threatening.has(ch)) threateningCount++;
+    if (EMOJI_SENTIMENT_MAP.mocking.has(ch)) mockingCount++;
+    if (EMOJI_SENTIMENT_MAP.negative.has(ch)) negativeCount++;
+    if (EMOJI_SENTIMENT_MAP.sarcastic.has(ch)) sarcasticCount++;
+    if (EMOJI_SENTIMENT_MAP.positive.has(ch)) positiveCount++;
+  }
+
+  const totalEmojis = offensiveCount + threateningCount + mockingCount + 
+                      negativeCount + sarcasticCount + positiveCount;
+  
+  // Calculate sentiment score: offensive/threatening are heavily weighted
+  const sentimentScore = totalEmojis === 0 ? 0 : 
+    (positiveCount - (offensiveCount * 3) - (threateningCount * 3) - 
+     (mockingCount * 1.5) - (negativeCount * 2) - sarcasticCount) / totalEmojis;
+
+  return {
+    offensiveCount,
+    threateningCount,
+    mockingCount,
+    negativeCount,
+    sarcasticCount,
+    positiveCount,
+    totalEmojis,
+    sentimentScore
+  };
+}
+
 function secondPersonDirected(text: string): boolean {
   // Include English + common Hindi/Urdu second-person markers
   const patterns = [
@@ -54,37 +116,56 @@ async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; rea
   const text = raw.trim();
   const lower = text.toLowerCase();
   const badwords = await loadBadWords();
-
+  
+  // Use emoji2vec-inspired sentiment analysis
+  const emojiAnalysis = analyzeEmojiSentiment(text);
   const hasBadWord = badwords.some((w) => lower.includes(w));
-  const badEmojiCount = countMatches(text, BAD_EMOJIS);
-  const mockingEmojiCount = countMatches(text, MOCKING_EMOJIS);
-  const threatEmojiPresent = containsAny(text, THREAT_EMOJIS);
   const isSecondPerson = secondPersonDirected(text);
 
-  // Heuristic rules (strict but fair):
+  console.log('Emoji sentiment analysis:', emojiAnalysis);
+
+  // Enhanced heuristic rules using emoji2vec sentiment mapping:
+  
   // 1) Explicit insults or slurs
   if (hasBadWord && isSecondPerson) {
     return { isHarmful: true, reason: 'Direct insult detected via keyword list addressed at a person.' };
   }
 
-  // 2) Mocking emojis combined with second-person or sarcastic praise -> harmful
-  if ((mockingEmojiCount >= 1 && badEmojiCount >= 1 && isSecondPerson) || mockingEmojiCount >= 2) {
-    return { isHarmful: true, reason: 'Combination of mocking and demeaning emojis directed at a person.' };
+  // 2) Offensive emojis (poop, middle finger, etc.) directed at someone
+  if (emojiAnalysis.offensiveCount >= 1 && isSecondPerson) {
+    return { isHarmful: true, reason: `Offensive emoji usage (${emojiAnalysis.offensiveCount} offensive emoji${emojiAnalysis.offensiveCount > 1 ? 's' : ''}) directed at a person.` };
   }
 
-  // 3) High-risk emojis alone aimed at a person
-  if (badEmojiCount >= 2 && isSecondPerson) {
-    return { isHarmful: true, reason: 'Multiple demeaning emojis targeted at a person.' };
+  // 3) Threatening emojis or language
+  if (emojiAnalysis.threateningCount >= 1 && isSecondPerson) {
+    return { isHarmful: true, reason: `Threatening emojis detected (${emojiAnalysis.threateningCount} threatening emoji${emojiAnalysis.threateningCount > 1 ? 's' : ''}) suggesting intimidation or harm.` };
   }
 
-  // 4) Threatening emojis or language
-  if (threatEmojiPresent && isSecondPerson) {
-    return { isHarmful: true, reason: 'Threatening emojis suggest intimidation or harm.' };
+  // 4) Mocking emojis combined with second-person or sarcastic praise -> harmful
+  if ((emojiAnalysis.mockingCount >= 2) || 
+      (emojiAnalysis.mockingCount >= 1 && emojiAnalysis.sarcasticCount >= 1 && isSecondPerson)) {
+    return { isHarmful: true, reason: 'Combination of mocking and sarcastic emojis directed at a person.' };
   }
 
-  // 5) Fallback: single demeaning emoji with explicit negative phrasing
-  if (badEmojiCount >= 1 && /\b(bad|terrible|disgusting|ugly|loser|cringe)\b/i.test(lower)) {
-    return { isHarmful: true, reason: 'Demeaning emoji used with negative descriptors.' };
+  // 5) Mixed negative sentiment with mocking
+  if (emojiAnalysis.mockingCount >= 1 && emojiAnalysis.offensiveCount >= 1 && isSecondPerson) {
+    return { isHarmful: true, reason: 'Mocking emoji combined with offensive emoji targeted at a person.' };
+  }
+
+  // 6) High negative sentiment score with personal direction
+  if (emojiAnalysis.sentimentScore < -0.5 && isSecondPerson && emojiAnalysis.totalEmojis >= 2) {
+    return { isHarmful: true, reason: `Highly negative emoji sentiment (score: ${emojiAnalysis.sentimentScore.toFixed(2)}) directed at a person.` };
+  }
+
+  // 7) Fallback: single offensive/mocking emoji with explicit negative phrasing
+  if ((emojiAnalysis.offensiveCount >= 1 || emojiAnalysis.mockingCount >= 1) && 
+      /\b(bad|terrible|disgusting|ugly|loser|cringe|pathetic|stupid|dumb)\b/i.test(lower)) {
+    return { isHarmful: true, reason: 'Negative emoji used with derogatory descriptors.' };
+  }
+
+  // 8) Sarcastic emojis with negative context
+  if (emojiAnalysis.sarcasticCount >= 2 && isSecondPerson && emojiAnalysis.positiveCount === 0) {
+    return { isHarmful: true, reason: 'Multiple sarcastic emojis suggesting mockery.' };
   }
 
   return { isHarmful: false, reason: 'Clean content' };
