@@ -125,6 +125,12 @@ async function heuristicModerate(raw: string): Promise<{ isHarmful: boolean; rea
   const hasBadWord = badwords.some((w) => lower.includes(w));
   const isSecondPerson = secondPersonDirected(text);
 
+  // Product policy: immediately flag these emojis as bullying even alone
+  const hasBullyingEmoji = [...text].some((ch) => '🤢💩🙄😑🤮'.includes(ch));
+  if (hasBullyingEmoji) {
+    return { isHarmful: true, reason: 'Bullying emoji detected by policy' };
+  }
+
   console.log('Emoji sentiment analysis:', JSON.stringify(emojiAnalysis));
   console.log('Is second person directed:', isSecondPerson);
   console.log('Comment text:', text);

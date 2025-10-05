@@ -211,15 +211,23 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
       const { data: moderationData } = moderationResponse;
       const { isHarmful, reason } = moderationData;
 
-      // Insert the comment with moderation results
+      // Block harmful comments entirely
+      if (isHarmful) {
+        toast({
+          title: "Comment Blocked",
+          description: "Your comment was flagged for: " + reason,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Insert the comment (clean)
       const { error: commentError } = await supabase
         .from('comments')
         .insert({
           post_id: post.id,
           user_id: currentUserId,
-          content: newComment.trim(),
-          is_hidden: isHarmful,
-          moderation_reason: isHarmful ? reason : null
+          content: newComment.trim()
         });
 
       if (commentError) {
@@ -231,19 +239,10 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
         });
       } else {
         setNewComment("");
-        
-        if (isHarmful) {
-          toast({
-            title: "Comment Hidden",
-            description: "Your comment was flagged and hidden for: " + reason,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Comment added",
-            description: "Your comment has been posted successfully.",
-          });
-        }
+        toast({
+          title: "Comment added",
+          description: "Your comment has been posted successfully.",
+        });
       }
     } catch (error) {
       console.error('Error processing comment:', error);
