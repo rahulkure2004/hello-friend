@@ -10,13 +10,13 @@ const corsHeaders = {
 // Emojis categorized by their semantic meaning and sentiment
 const EMOJI_SENTIMENT_MAP = {
   // Highly negative/offensive emojis
-  offensive: new Set(['💩','🖕','🤮','🤡','🍑','🍆']),
+  offensive: new Set(['💩','🖕','🤮','🤡','🍑','🍆','🤢','🙄','😑']),
   // Threatening/violent emojis
   threatening: new Set(['🔪','💀','☠️','🔫','⚰️','🩸','👊','🗡️']),
   // Mocking/laughing emojis (context-dependent)
   mocking: new Set(['😂','🤣','😹','🤪','😜','🙃']),
   // Negative sentiment emojis
-  negative: new Set(['😠','😡','🤬','😤','👎','💔','😒','🙄','😑','🤨']),
+  negative: new Set(['😠','😡','🤬','😤','👎','💔','😒','🤨']),
   // Sarcastic/passive-aggressive emojis
   sarcastic: new Set(['🙂','🫠','😏','🤭']),
   // Positive sentiment emojis (generally safe)
