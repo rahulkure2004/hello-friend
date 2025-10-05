@@ -73,8 +73,15 @@ export function Header({ currentUser, onLogout }: HeaderProps) {
           
           {currentUser ? (
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="p-2">
-                <User className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="p-2"
+                asChild
+              >
+                <Link to="/profile" className={isActive('/profile') ? 'text-primary' : ''}>
+                  <User className="h-5 w-5" />
+                </Link>
               </Button>
               <Button 
                 variant="outline" 
