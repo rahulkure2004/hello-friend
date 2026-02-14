@@ -1,9 +1,10 @@
-import { Camera, Heart, Home, MessageCircle, Search, User } from "lucide-react";
+import { Heart, Home, MessageCircle, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { AuthDialog } from "@/components/AuthDialog";
+import instagramLogo from "../assets/instagram.svg"; // <-- Add this import
 
 interface HeaderProps {
   currentUser?: any;
@@ -21,9 +22,9 @@ export function Header({ currentUser, onLogout }: HeaderProps) {
       <div className="container flex h-14 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <Camera className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            SocialSafe
+          <img src={instagramLogo} alt="Instagram" className="h-7 w-7" />
+          <h1 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-yellow-500 bg-clip-text text-transparent">
+            Instagram
           </h1>
         </Link>
 

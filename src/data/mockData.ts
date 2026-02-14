@@ -5,7 +5,7 @@ export const mockUsers = [
     username: 'sarah_chen',
     display_name: 'Sarah Chen',
     bio: 'Photography enthusiast 📸 | Travel lover ✈️',
-    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
+    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=600&fit=crop'
   },
   {
     id: '2', 
@@ -50,7 +50,7 @@ export const mockPosts = [
   {
     id: '550e8400-e29b-41d4-a716-446655440002',
     user_id: '2',
-    image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=600&fit=crop',
+    image_url: 'https://plus.unsplash.com/premium_photo-1682096259050-361e2989706d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=600&fit=crop',
     caption: 'Homemade pizza night! 🍕 Nothing beats fresh ingredients and good company.',
     likes_count: 89,
     created_at: '2024-01-15T19:15:00Z',
